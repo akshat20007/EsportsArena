@@ -69,7 +69,7 @@ class SignUpActivity : BaseActivity() {
             val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
             if (account != null) {
                 GregisterUser(account)
-                
+
                 finish()
             }
         } catch (e: ApiException) {
@@ -157,6 +157,7 @@ class SignUpActivity : BaseActivity() {
         val name: String? = account.displayName
         val email: String? = account.email
         val pass: Int? = 123456
+        var user: User? = null
 
         if (email != null) {
             FirebaseAuth.getInstance()
@@ -166,13 +167,14 @@ class SignUpActivity : BaseActivity() {
                         val firebaseUser: FirebaseUser = task.result!!.user!!
                         val registeredEmail = firebaseUser.email!!
 
-
-                        val user = name?.let { User(firebaseUser.uid, it,registeredEmail) }
-
+                        if (name != null) {
+                                user =  User(firebaseUser.uid, name,registeredEmail)
+                            }
                         if (user != null) {
-                            FirestoreClass().registerUser(this,user)
+                            FirestoreClass().registerUser(this, user!!)
                         }
-                    } else {
+
+                        }else {
                         Toast.makeText(
                             this,
                             task.exception!!.message, Toast.LENGTH_SHORT
@@ -181,4 +183,7 @@ class SignUpActivity : BaseActivity() {
                 }
         }
 }
-}
+
+
+
+    }
